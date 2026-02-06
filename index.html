@@ -230,7 +230,33 @@
   const lastNames = ['Sharma','Mehta','Singh','Iyer','Patel'];
   const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  const data = Array.from({ length: 70 }).map((_, i) => ({
+  // Fixed records (manually added)
+  const fixedRecords = [
+    {
+      id: 'FR-071',
+      name: 'Amayra Sagar',
+      age: 10,
+      status: 'Under Review',
+      tags: ['School','Honesty','Belongings'],
+      school: 'Freedom International School, HSR Layout, Bangalore 560068',
+      behaviour: 'The child was reported for repeatedly taking stationery items, croc charms from footwear, and small amounts of money belonging to classmates without permission, both in school and during shared activities.',
+      actionTaken: 'Parents were informed and items were returned where possible. Clear rules regarding personal property were explained, and the matter remains under close review.',
+      plan: 'I will not take anything that does not belong to me and will immediately return items if I make a mistake.'
+    },
+    {
+      id: 'FR-072',
+      name: 'Manya',
+      age: 9,
+      status: 'Under Review',
+      tags: ['School','Honesty','Behaviour'],
+      school: 'Freedom International School, HSR Layout, Bangalore 560068',
+      behaviour: 'The child was observed taking classmates’ stationery items without asking and keeping them despite reminders from peers.',
+      actionTaken: 'Discussion held with guardians and school staff. Monitoring initiated to prevent recurrence.',
+      plan: 'I will ask before using or taking anything that belongs to someone else.'
+    }
+  ];
+
+  const randomRecords = Array.from({ length: 70 }).map((_, i) => ({
     id: 'FR-' + String(i + 1).padStart(3, '0'),
     name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
     age: 8 + Math.floor(Math.random() * 5),
@@ -259,6 +285,19 @@
       'I will focus on being honest and responsible.'
     ])
   }));
+
+  const data = [...fixedRecords, ...randomRecords];
+
+  // Shuffle records so fixed entries appear randomly
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  shuffle(data);
 
   function renderStars(r) {
     const filled = r.status === 'Resolved' ? 3 : 0;
