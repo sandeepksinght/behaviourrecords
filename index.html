@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Family Responsibility Management System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --border: #d0d5dd;
+      --muted: #667085;
+      --text: #1d2939;
+      --danger: #b42318;
+      --success: #027a48;
+      --accent: #175cd3;
+      --nav: #0b1f44;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      color: var(--text);
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: var(--nav);
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav-left { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, #3b82f6, #93c5fd);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff;
+    }
+    .menu { display: none; }
+    .nav-right { font-size: 11px; opacity: 0.9; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(180deg, #0b1f44, #12326b);
+      color: #fff;
+      padding: 28px 16px 32px;
+    }
+    .hero-inner { max-width: 1100px; margin: auto; }
+    .hero h1 { font-size: 22px; margin: 0 0 8px 0; }
+    .hero p { font-size: 14px; opacity: 0.95; }
+    .hero-meta { margin-top: 10px; font-size: 11px; opacity: 0.85; }
+
+    /* PAGE */
+    .page { padding: 16px 12px 32px; }
+    .container {
+      max-width: 1100px; margin: auto; background: var(--panel);
+      border: 1px solid var(--border); padding: 14px;
+    }
+    .notice {
+      font-size: 12px; color: #344054; background: #f9fafb;
+      border: 1px dashed var(--border); padding: 10px; margin-bottom: 14px;
+    }
+
+    /* CONTROLS */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .search { position: relative; }
+    .search input {
+      width: 100%; padding: 10px 12px 10px 32px;
+      border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+    }
+    .search span {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); font-size: 14px;
+    }
+    select {
+      padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 13px; background: #fff;
+    }
+
+    /* TABLE → CARD LIST ON MOBILE */
+    table { width: 100%; border-collapse: collapse; }
+    thead { display: none; }
+    tr.data {
+      display: block;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+    tr.data td {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border: none;
+      font-size: 13px;
+    }
+    tr.data td::before {
+      content: attr(data-label);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .status { font-weight: 600; }
+    .review { color: var(--danger); }
+    .resolved { color: var(--success); }
+
+    .chip {
+      display: inline-block; padding: 2px 6px; border-radius: 999px;
+      font-size: 10px; border: 1px solid var(--border); background: #fff;
+    }
+
+    .stars { font-size: 13px; }
+    .star { color: #d0d5dd; }
+    .star.filled { color: #f59e0b; }
+    .warning { color: var(--danger); font-weight: 600; font-size: 12px; }
+
+    button {
+      padding: 8px 12px; font-size: 13px; border-radius: 6px;
+      border: 1px solid var(--border); background: #fff; cursor: pointer;
+    }
+    button.primary { color: var(--accent); border-color: var(--accent); }
+
+    /* DETAILS */
+    .details { display: none; }
+    .details td {
+      display: block;
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .profile { display: flex; gap: 12px; margin-bottom: 10px; }
+    .avatar {
+      width: 56px; height: 56px; border-radius: 8px; border: 1px solid var(--border);
+      background: #e4e7ec; display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: #98a2b3;
+    }
+    .section-title { font-weight: 600; margin: 10px 0 4px; font-size: 13px; }
+    .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 12px; }
+    .kv div:nth-child(odd) { color: var(--muted); }
+
+    .report-box textarea {
+      width: 100%; min-height: 80px; padding: 8px; font-size: 12px;
+      border: 1px solid var(--border); border-radius: 6px; resize: vertical;
+    }
+    .report-actions { margin-top: 6px; display: flex; gap: 8px; }
+    .muted-note { font-size: 11px; color: var(--muted); }
+
+    /* PAGINATION */
+    #pagination { flex-direction: column; gap: 8px; align-items: stretch; }
+    #pagination button { width: 100%; }
+
+    footer { text-align: center; font-size: 11px; color: #98a2b3; margin-top: 12px; }
+
+    /* DESKTOP ENHANCEMENTS */
+    @media (min-width: 768px) {
+      .menu { display: flex; gap: 16px; font-size: 13px; }
+      thead { display: table-header-group; }
+      tr.data { display: table-row; border-radius: 0; }
+      tr.data td { display: table-cell; border-bottom: 1px solid #e4e7ec; }
+      tr.data td::before { display: none; }
+      .controls { grid-template-columns: 1fr 200px; }
+      #pagination { flex-direction: row; align-items: center; }
+      #pagination button { width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="nav-left"><div class="logo">FR</div>Family Responsibility System</div>
+  <div class="menu"><span>Dashboard</span><span>Records</span><span>Schools</span><span>Reports</span><span>Settings</span></div>
+  <div class="nav-right">🔒 Private Access</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Responsibility. Accountability. Growth.</h1>
+    <p>A private family system designed to track behavioural incidents and reinforce honesty.</p>
+    <div class="hero-meta">System status: Active • Last sync: <span id="date"></span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="container">
+    <div class="notice">This is a private internal system. Records are reviewed and updated when behaviour improves.</div>
+
+    <div class="controls">
+      <div class="search"><span>🔍</span><input id="search" placeholder="Search by name or record ID" /></div>
+      <select id="filter"><option value="all">All statuses</option><option value="Under Review">Under Review</option><option value="Resolved">Resolved</option></select>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Record ID</th><th>Child</th><th>Age</th><th>Status</th><th>Tags</th><th>Honesty Score</th><th>Action</th></tr>
+      </thead>
+      <tbody id="records"></tbody>
+    </table>
+
+    <div id="pagination" style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;">
+      <div id="pageInfo"></div>
+      <div style="display:flex;gap:8px;">
+        <button id="prevPage">Previous</button>
+        <button id="nextPage">Next</button>
+      </div>
+    </div>
+  </div>
+  <footer>For family use only • Not a public website</footer>
+</div>
+
+<script>
+  document.getElementById('date').textContent = new Date().toDateString();
+
+  const statuses = ['Under Review', 'Resolved'];
+  const tagsPool = ['School','Home','Honesty','Belongings','Behaviour','Friends'];
+  const firstNames = ['Aarav','Riya','Kabir','Ananya','Vihaan','Ishita','Arjun','Myra','Advait','Sara'];
+  const lastNames = ['Sharma','Mehta','Singh','Iyer','Patel'];
+  const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  const data = Array.from({ length: 70 }).map((_, i) => ({
+    id: 'FR-' + String(i + 1).padStart(3, '0'),
+    name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
+    age: 8 + Math.floor(Math.random() * 5),
+    status: rand(statuses),
+    tags: Array.from({ length: 1 + Math.floor(Math.random() * 3) }).map(() => rand(tagsPool)),
+    school: rand(['Delhi Public School, Bengaluru','National Public School, Indiranagar','Kendriya Vidyalaya, Hebbal','Ryan International School, Whitefield','Presidency School, Kasturinagar']),
+    behaviour: rand([
+      'The child was observed taking stationery items from classmates during school hours without asking for permission.',
+      'The child picked up items that were found in common areas and did not submit them to the teacher or lost-and-found.',
+      'The child borrowed books and small supplies from peers and failed to return them on time.',
+      'The child took snacks and small food items from shared spaces without consent.',
+      'The child used belongings of others without checking ownership or asking first.'
+    ]),
+    actionTaken: rand([
+      'Items were returned and an apology was made in the presence of an adult.',
+      'Parents were informed and a discussion was held at home.',
+      'A written apology was completed and monitoring was initiated.',
+      'Privileges were temporarily reduced with daily check-ins.',
+      'Rules regarding personal property were reviewed and acknowledged.'
+    ]),
+    plan: rand([
+      'I will ask before taking anything that does not belong to me.',
+      'I will give found items to a teacher or parent.',
+      'I will return borrowed items on the same day.',
+      'I will check with an adult if I am unsure.',
+      'I will focus on being honest and responsible.'
+    ])
+  }));
+
+  function renderStars(r) {
+    const filled = r.status === 'Resolved' ? 3 : 0;
+    let html = '<span class="stars">';
+    for (let i = 0; i < 3; i++) html += `<span class="star ${i < filled ? 'filled' : ''}">★</span>`;
+    html += '</span>';
+    if (filled === 0) html += ' <span class="warning">⚠</span>';
+    return html;
+  }
+
+  const tbody = document.getElementById('records');
+  const pageInfo = document.getElementById('pageInfo');
+  const prevPageBtn = document.getElementById('prevPage');
+  const nextPageBtn = document.getElementById('nextPage');
+  const search = document.getElementById('search');
+  const filter = document.getElementById('filter');
+
+  let currentPage = 1;
+  const pageSize = 10;
+
+  function render() {
+    tbody.innerHTML = '';
+    const q = search.value.toLowerCase();
+    const f = filter.value;
+
+    const filtered = data.filter(r => f === 'all' || r.status === f)
+      .filter(r => r.name.toLowerCase().includes(q) || r.id.toLowerCase().includes(q));
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * pageSize;
+    const pageData = filtered.slice(start, start + pageSize);
+
+    pageInfo.textContent = `Showing ${start + 1}-${Math.min(start + pageSize, filtered.length)} of ${filtered.length}`;
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages;
+
+    pageData.forEach((r, idx) => {
+      const globalIndex = start + idx;
+      const row = document.createElement('tr');
+      row.className = 'data';
+      row.innerHTML = `
+        <td data-label="Record">${r.id}</td>
+        <td data-label="Child">${r.name}</td>
+        <td data-label="Age">${r.age}</td>
+        <td data-label="Status" class="status ${r.status === 'Resolved' ? 'resolved' : 'review'}">${r.status}</td>
+        <td data-label="Tags">${r.tags.map(t => `<span class=\"chip\">${t}</span>`).join(' ')}</td>
+        <td data-label="Honesty">${renderStars(r)}</td>
+        <td data-label="Action"><button class="primary" onclick="toggle(${globalIndex})">View</button></td>
+      `;
+
+      const details = document.createElement('tr');
+      details.innerHTML = `
+        <td colspan="7" class="details" id="d${globalIndex}">
+          <div class="profile">
+            <div class="avatar">👤</div>
+            <div class="kv">
+              <div>Record ID</div><div>${r.id}</div>
+              <div>School</div><div>${r.school}</div>
+              <div>Status</div><div>${r.status}</div>
+            </div>
+          </div>
+          <div class="section-title">Observed Behaviour</div>
+          <p>${r.behaviour}</p>
+          <div class="section-title">Action Taken</div>
+          <p>${r.actionTaken}</p>
+          <div class="section-title">Child’s Plan Going Forward</div>
+          <p>${r.plan}</p>
+          <div class="section-title">Report</div>
+          <div class="report-box">
+            <textarea placeholder="Add notes (internal use only)"></textarea>
+            <div class="report-actions">
+              <button onclick="submitReport(this)">Report Behavior</button>
+              <span class="muted-note">Saved for review (demo only)</span>
+            </div>
+          </div>
+        </td>`;
+
+      tbody.appendChild(row);
+      tbody.appendChild(details);
+    });
+  }
+
+  function toggle(i) {
+    document.querySelectorAll('.details').forEach(row => {
+      if (row.id !== 'd' + i) row.style.display = 'none';
+    });
+    const el = document.getElementById('d' + i);
+    el.style.display = el.style.display === 'table-cell' ? 'none' : 'table-cell';
+  }
+
+  function submitReport(btn) {
+    const box = btn.closest('.report-box');
+    const ta = box.querySelector('textarea');
+    if (ta) ta.value = '';
+  }
+
+  search.addEventListener('input', () => { currentPage = 1; render(); });
+  filter.addEventListener('change', () => { currentPage = 1; render(); });
+
+  prevPageBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; render(); } });
+  nextPageBtn.addEventListener('click', () => { currentPage++; render(); });
+
+  render();
+</script>
+</body>
+</html>
